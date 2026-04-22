@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Interested Donors - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-heart me-2 text-danger"></i>Interested Donors
+            </h2>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2 text-primary"></i>Filter Donors
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('admin_interested_donors') }}">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <label for="min_age" class="form-label">Min Age</label>
+                            <input type="number" class="form-control" id="min_age" name="min_age" 
+                                   value="{{ request.args.get('min_age', 18) }}" min="18" max="65">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="max_age" class="form-label">Max Age</label>
+                            <input type="number" class="form-control" id="max_age" name="max_age" 
+                                   value="{{ request.args.get('max_age', 65) }}" min="18" max="65">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if request.args.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if request.args.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if request.args.get('gender') == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="blood_group" class="form-label">Blood Group</label>
+                            <select class="form-select" id="blood_group" name="blood_group">
+                                <option value="">All Blood Groups</option>
+                                <option value="A+" {% if request.args.get('blood_group') == 'A+' %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if request.args.get('blood_group') == 'A-' %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if request.args.get('blood_group') == 'B+' %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if request.args.get('blood_group') == 'B-' %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if request.args.get('blood_group') == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if request.args.get('blood_group') == 'AB-' %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if request.args.get('blood_group') == 'O+' %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if request.args.get('blood_group') == 'O-' %}selected{% endif %}>O-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Apply Filters
+                            </button>
+                            <a href="{{ url_for('admin_interested_donors') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-redo me-1"></i>Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Interested Donors List -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2 text-primary"></i>Interested Donors ({{ donors|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if donors %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Donor Name</th>
+                                    <th>Blood Group</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Weight</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Interested Since</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donor in donors %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ donor.name }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ donor.address[:50] }}...</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge blood-group-badge bg-danger">{{ donor.blood_group }}</span>
+                                    </td>
+                                    <td>{{ donor.age }} years</td>
+                                    <td>{{ donor.gender }}</td>
+                                    <td>{{ donor.weight }} kg</td>
+                                    <td>{{ donor.phone }}</td>
+                                    <td>{{ donor.email }}</td>
+                                    <td>
+                                        <small>{{ donor.updated_at[:10] if donor.updated_at else 'Recently' }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-success" 
+                                                    onclick="scheduleAppointment({{ donor.id }}, '{{ donor.name }}', '{{ donor.blood_group }}')"
+                                                    data-bs-toggle="tooltip" title="Schedule Appointment">
+                                                <i class="fas fa-calendar-plus"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary" 
+                                                    onclick="viewDonor({{ donor.id }})"
+                                                    data-bs-toggle="tooltip" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Interested Donors Found</h5>
+                        <p class="text-muted">No donors have expressed interest yet, or no donors match your filters.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Schedule Appointment Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Schedule Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <input type="hidden" id="appointmentDonorId">
+                    <div class="mb-3">
+                        <label class="form-label">Donor</label>
+                        <p class="form-control-plaintext" id="appointmentDonorInfo"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="appointment_date" class="form-label">Appointment Date</label>
+                            <input type="date" class="form-control" id="appointment_date" 
+                                   min="{{ today }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="appointment_time" class="form-label">Appointment Time</label>
+                            <input type="time" class="form-control" id="appointment_time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="appointment_location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="appointment_location" 
+                               placeholder="Enter appointment location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="appointment_message" class="form-label">Additional Message</label>
+                        <textarea class="form-control" id="appointment_message" 
+                                  rows="3" placeholder="Any additional instructions or information..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="sendAppointment()">
+                    <i class="fas fa-paper-plane me-1"></i>Send Appointment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentDonorId = null;
+
+function scheduleAppointment(donorId, donorName, bloodGroup) {
+    currentDonorId = donorId;
+    document.getElementById('appointmentDonorId').value = donorId;
+    document.getElementById('appointmentDonorInfo').textContent = `${donorName} (${bloodGroup})`;
+    
+    // Clear form
+    document.getElementById('appointment_date').value = '';
+    document.getElementById('appointment_time').value = '';
+    document.getElementById('appointment_location').value = '';
+    document.getElementById('appointment_message').value = '';
+    
+    new bootstrap.Modal(document.getElementById('appointmentModal')).show();
+}
+
+function sendAppointment() {
+    const appointmentDate = document.getElementById('appointment_date').value;
+    const appointmentTime = document.getElementById('appointment_time').value;
+    const location = document.getElementById('appointment_location').value;
+    const message = document.getElementById('appointment_message').value;
+    
+    if (!appointmentDate || !appointmentTime || !location) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    fetch(`/admin/send_appointment/${currentDonorId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            appointment_date: appointmentDate,
+            appointment_time: appointmentTime,
+            location: location,
+            message: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Appointment sent successfully!');
+            bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error sending appointment: ' + error);
+    });
+}
+
+function viewDonor(donorId) {
+    // In a real application, this would fetch donor details from the server
+    alert('Donor details would be shown here in a production environment.');
+}
+</script>
+{% endblock %}

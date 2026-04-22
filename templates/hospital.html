@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Hospital Dashboard - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-ambulance me-2 text-info"></i>Hospital Dashboard
+            </h2>
+            <span class="badge bg-info fs-6">Welcome, {{ session.hospital_name }}</span>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-injured fa-2x mb-3"></i>
+                        <h4>Register Patient</h4>
+                        <p>Add new patient requiring blood</p>
+                        <a href="{{ url_for('feed_patient') }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-plus me-1"></i>Add Patient
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tint fa-2x mb-3"></i>
+                        <h4>Blood Inventory</h4>
+                        <p>View available blood stock</p>
+                        <a href="{{ url_for('view_blood') }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-search me-1"></i>View Blood
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x mb-3"></i>
+                        <h4>Find Donors</h4>
+                        <p>Search for blood donors</p>
+                        <a href="{{ url_for('view_donors') }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-search me-1"></i>View Donors
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Hospital Actions -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-tasks me-2 text-success"></i>Hospital Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('feed_patient') }}" class="btn btn-outline-primary text-start">
+                                <i class="fas fa-user-plus me-2"></i>Register New Patient
+                            </a>
+                            <a href="{{ url_for('view_patients') }}" class="btn btn-outline-success text-start">
+                                <i class="fas fa-list me-2"></i>View All Patients
+                            </a>
+                            <a href="{{ url_for('view_blood') }}" class="btn btn-outline-warning text-start">
+                                <i class="fas fa-tint me-2"></i>Check Blood Availability
+                            </a>
+                            <a href="{{ url_for('view_donors') }}" class="btn btn-outline-info text-start">
+                                <i class="fas fa-users me-2"></i>Find Blood Donors
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger text-start">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                            <!-- Add this to the Hospital Actions card -->
+<a href="{{ url_for('hospital_send_blood_request') }}" class="btn btn-outline-warning text-start">
+    <i class="fas fa-bullhorn me-2"></i>Send Blood Request to Admin
+</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-phone-alt me-2 text-danger"></i>Emergency Contacts
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <small class="text-muted">Blood Bank Emergency:</small>
+                            <br>
+                            <strong>+1-555-0100</strong>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Admin Support:</small>
+                            <br>
+                            <strong>+1-555-0101</strong>
+                        </div>
+                        <div>
+                            <small class="text-muted">Technical Support:</small>
+                            <br>
+                            <strong>+1-555-0102</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

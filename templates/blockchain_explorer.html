@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Blockchain Explorer - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-link me-2 text-success"></i>Blockchain Explorer
+            </h2>
+            <div class="btn-group">
+                <button class="btn btn-outline-success btn-sm" onclick="verifyChain()">
+                    <i class="fas fa-shield-alt me-1"></i>Verify Chain
+                </button>
+                <span class="btn btn-success btn-sm">
+                    Blocks: {{ chain_length }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Blockchain Info -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Blockchain Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Total Blocks:</strong> {{ chain_length }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Genesis Block:</strong> {{ blocks[0].timestamp[:10] }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Latest Block:</strong> {{ blocks[-1].timestamp[:10] }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Status:</strong> 
+                        <span id="chainStatus" class="badge bg-success">Verified</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blocks List -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cubes me-2 text-primary"></i>All Blocks in Chain
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for block in blocks %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Block #{{ block.index }}</h6>
+                            <span class="badge bg-{{ 'success' if block.index == 0 else 'primary' }}">
+                                {{ 'Genesis Block' if block.index == 0 else 'Transaction Block' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Hash:</strong>
+                                <br>
+                                <small class="text-muted font-monospace">{{ block.hash }}</small>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Previous Hash:</strong>
+                                <br>
+                                <small class="text-muted font-monospace">{{ block.previous_hash }}</small>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <strong>Timestamp:</strong>
+                                <br>
+                                <small>{{ block.timestamp }}</small>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Data:</strong>
+                                <br>
+                                <pre class="small bg-light p-2 mt-1">{{ block.data | tojson(indent=2) }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function verifyChain() {
+    fetch('/api/blockchain/verify')
+        .then(response => response.json())
+        .then(data => {
+            const statusElement = document.getElementById('chainStatus');
+            if (data.valid) {
+                statusElement.className = 'badge bg-success';
+                statusElement.textContent = 'Verified';
+                showAlert('Blockchain verification successful! Chain is valid.', 'success');
+            } else {
+                statusElement.className = 'badge bg-danger';
+                statusElement.textContent = 'Compromised';
+                showAlert('Blockchain verification failed! Chain has been compromised.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error verifying chain:', error);
+            showAlert('Error verifying blockchain.', 'error');
+        });
+}
+
+function showAlert(message, type) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+    
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

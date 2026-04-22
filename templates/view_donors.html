@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+
+{% block title %}View Donors - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-users me-2 text-primary"></i>Blood Donors
+            </h2>
+            <div class="btn-group">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+                <button class="btn btn-outline-primary" onclick="exportDonors()">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2 text-primary"></i>Filter Donors
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('view_donors') }}">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label for="min_age" class="form-label">Min Age</label>
+                            <input type="number" class="form-control" id="min_age" name="min_age" 
+                                   value="{{ request.args.get('min_age', '') }}" min="18" max="65" 
+                                   placeholder="18">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="max_age" class="form-label">Max Age</label>
+                            <input type="number" class="form-control" id="max_age" name="max_age" 
+                                   value="{{ request.args.get('max_age', '') }}" min="18" max="65" 
+                                   placeholder="65">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="blood_group" class="form-label">Blood Group</label>
+                            <select class="form-select" id="blood_group" name="blood_group">
+                                <option value="">All Groups</option>
+                                <option value="A+" {% if request.args.get('blood_group') == 'A+' %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if request.args.get('blood_group') == 'A-' %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if request.args.get('blood_group') == 'B+' %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if request.args.get('blood_group') == 'B-' %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if request.args.get('blood_group') == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if request.args.get('blood_group') == 'AB-' %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if request.args.get('blood_group') == 'O+' %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if request.args.get('blood_group') == 'O-' %}selected{% endif %}>O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if request.args.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if request.args.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if request.args.get('gender') == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="availability" class="form-label">Availability</label>
+                            <select class="form-select" id="availability" name="availability">
+                                <option value="">All</option>
+                                <option value="available" {% if request.args.get('availability') == 'available' %}selected{% endif %}>Available</option>
+                                <option value="not_available" {% if request.args.get('availability') == 'not_available' %}selected{% endif %}>Not Available</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2 d-flex align-items-end">
+                            <div class="d-grid w-100">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% if request.args.get('min_age') or request.args.get('max_age') or request.args.get('blood_group') or request.args.get('gender') or request.args.get('availability') %}
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted me-2">Active filters:</small>
+                                {% if request.args.get('min_age') %}
+                                <span class="badge bg-primary me-1">Min Age: {{ request.args.get('min_age') }}</span>
+                                {% endif %}
+                                {% if request.args.get('max_age') %}
+                                <span class="badge bg-primary me-1">Max Age: {{ request.args.get('max_age') }}</span>
+                                {% endif %}
+                                {% if request.args.get('blood_group') %}
+                                <span class="badge bg-danger me-1">Blood Group: {{ request.args.get('blood_group') }}</span>
+                                {% endif %}
+                                {% if request.args.get('gender') %}
+                                <span class="badge bg-info me-1">Gender: {{ request.args.get('gender') }}</span>
+                                {% endif %}
+                                {% if request.args.get('availability') %}
+                                <span class="badge bg-{{ 'success' if request.args.get('availability') == 'available' else 'warning' }} me-1">
+                                    {{ 'Available' if request.args.get('availability') == 'available' else 'Not Available' }}
+                                </span>
+                                {% endif %}
+                                <a href="{{ url_for('view_donors') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="fas fa-times me-1"></i>Clear
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Donors Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center p-3">
+                        <h4>{{ donors|length }}</h4>
+                        <small>Total Donors</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center p-3">
+                        <h4>{{ donors|selectattr('is_available')|list|length }}</h4>
+                        <small>Available Now</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center p-3">
+                        <h4>{{ (donors|selectattr('gender', 'equalto', 'Male')|list|length) }}</h4>
+                        <small>Male Donors</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center p-3">
+                        <h4>{{ (donors|selectattr('gender', 'equalto', 'Female')|list|length) }}</h4>
+                        <small>Female Donors</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Distribution -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2 text-primary"></i>Age Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-primary mb-1">{{ donors|selectattr('age', 'lt', 25)|list|length }}</h6>
+                            <small class="text-muted">18-24</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-success mb-1">{{ donors|selectattr('age', 'ge', 25)|selectattr('age', 'lt', 35)|list|length }}</h6>
+                            <small class="text-muted">25-34</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-info mb-1">{{ donors|selectattr('age', 'ge', 35)|selectattr('age', 'lt', 45)|list|length }}</h6>
+                            <small class="text-muted">35-44</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-warning mb-1">{{ donors|selectattr('age', 'ge', 45)|selectattr('age', 'lt', 55)|list|length }}</h6>
+                            <small class="text-muted">45-54</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-danger mb-1">{{ donors|selectattr('age', 'ge', 55)|list|length }}</h6>
+                            <small class="text-muted">55+</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <div class="border rounded p-2">
+                            <h6 class="text-dark mb-1">
+                                {% if donors %}
+                                    {{ (donors|sum(attribute='age') / donors|length)|round(1) }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </h6>
+                            <small class="text-muted">Avg Age</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donors Grid -->
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2 text-primary"></i>Donor List
+                    <span class="badge bg-primary ms-2">{{ donors|length }}</span>
+                </h5>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-primary" onclick="selectAllDonors()">
+                        <i class="fas fa-check-square me-1"></i>Select All
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="sendBulkEmail()">
+                        <i class="fas fa-envelope me-1"></i>Email Selected
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if donors %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="30">
+                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                    </th>
+                                    <th>Donor Name</th>
+                                    <th>Blood Group</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Phone</th>
+                                    <th>Availability</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donor in donors %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="donor-checkbox" value="{{ donor.id }}" data-email="{{ donor.email }}">
+                                    </td>
+                                    <td>
+                                        <strong>{{ donor.name }}</strong>
+                                        {% if donor.age <= 25 %}
+                                            <span class="badge bg-info ms-1">Young</span>
+                                        {% elif donor.age >= 55 %}
+                                            <span class="badge bg-warning ms-1">Senior</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge blood-group-badge bg-danger">{{ donor.blood_group }}</span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ donor.age }}</strong>
+                                        <small class="text-muted">years</small>
+                                    </td>
+                                    <td>{{ donor.gender }}</td>
+                                    <td>{{ donor.phone }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if donor.is_available else 'secondary' }}">
+                                            {{ 'Available' if donor.is_available else 'Not Available' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" 
+                                                    onclick="viewDonorDetails({{ donor.id }})"
+                                                    data-bs-toggle="tooltip" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success" 
+                                                    onclick="sendEmailToDonor('{{ donor.email }}', '{{ donor.name }}')"
+                                                    data-bs-toggle="tooltip" title="Send Email">
+                                                <i class="fas fa-envelope"></i>
+                                            </button>
+                                            <button class="btn btn-outline-info" 
+                                                    onclick="viewDonationHistory({{ donor.id }})"
+                                                    data-bs-toggle="tooltip" title="Donation History">
+                                                <i class="fas fa-history"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-bolt me-2 text-warning"></i>Quick Actions
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <button class="btn btn-outline-primary w-100" onclick="quickFilter('young')">
+                                                <i class="fas fa-child me-1"></i>Young Donors (18-25)
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <button class="btn btn-outline-success w-100" onclick="quickFilter('available')">
+                                                <i class="fas fa-check me-1"></i>Available Now
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <button class="btn btn-outline-danger w-100" onclick="quickFilter('universal')">
+                                                <i class="fas fa-tint me-1"></i>Universal Donors (O-)
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <button class="btn btn-outline-info w-100" onclick="quickFilter('senior')">
+                                                <i class="fas fa-user-friends me-1"></i>Senior Donors (55+)
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Donors Found</h5>
+                        <p class="text-muted">
+                            {% if request.args.get('min_age') or request.args.get('max_age') or request.args.get('blood_group') or request.args.get('gender') %}
+                                No donors match your current filters. Try adjusting your criteria.
+                            {% else %}
+                                There are no registered donors in the system.
+                            {% endif %}
+                        </p>
+                        {% if request.args.get('min_age') or request.args.get('max_age') or request.args.get('blood_group') or request.args.get('gender') %}
+                        <a href="{{ url_for('view_donors') }}" class="btn btn-primary">
+                            <i class="fas fa-redo me-1"></i>Clear Filters
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="emailModalTitle">Send Email to Donor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="emailForm">
+                    <div class="mb-3">
+                        <label for="emailSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="emailSubject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailMessage" class="form-label">Message</label>
+                        <textarea class="form-control" id="emailMessage" rows="8" required></textarea>
+                        <div class="form-text">You can use HTML formatting in your message.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Recipients</label>
+                        <div id="recipientList" class="border rounded p-2 bg-light"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="sendEmail()">
+                    <i class="fas fa-paper-plane me-1"></i>Send Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedDonors = new Set();
+
+function toggleSelectAll() {
+    const checkboxes = document.querySelectorAll('.donor-checkbox');
+    const selectAll = document.getElementById('selectAll');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+        if (selectAll.checked) {
+            selectedDonors.add(checkbox.value);
+        } else {
+            selectedDonors.delete(checkbox.value);
+        }
+    });
+    updateSelectedCount();
+}
+
+function selectAllDonors() {
+    document.getElementById('selectAll').checked = true;
+    toggleSelectAll();
+}
+
+function updateSelectedCount() {
+    // You can add a counter display if needed
+    console.log(`${selectedDonors.size} donors selected`);
+}
+
+function sendBulkEmail() {
+    if (selectedDonors.size === 0) {
+        alert('Please select at least one donor.');
+        return;
+    }
+    
+    const emails = Array.from(document.querySelectorAll('.donor-checkbox:checked'))
+        .map(checkbox => checkbox.dataset.email)
+        .join(', ');
+    
+    document.getElementById('emailModalTitle').textContent = `Send Email to ${selectedDonors.size} Donors`;
+    document.getElementById('recipientList').innerHTML = `<strong>To:</strong> ${emails}`;
+    document.getElementById('emailSubject').value = '';
+    document.getElementById('emailMessage').value = '';
+    
+    new bootstrap.Modal(document.getElementById('emailModal')).show();
+}
+
+function sendEmailToDonor(email, name) {
+    document.getElementById('emailModalTitle').textContent = `Send Email to ${name}`;
+    document.getElementById('recipientList').innerHTML = `<strong>To:</strong> ${email}`;
+    document.getElementById('emailSubject').value = '';
+    document.getElementById('emailMessage').value = '';
+    
+    new bootstrap.Modal(document.getElementById('emailModal')).show();
+}
+
+function sendEmail() {
+    const subject = document.getElementById('emailSubject').value;
+    const message = document.getElementById('emailMessage').value;
+    
+    if (!subject || !message) {
+        alert('Please fill in both subject and message.');
+        return;
+    }
+    
+    // In a real application, this would send the email via AJAX
+    alert(`Email would be sent with subject: "${subject}"`);
+    bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
+}
+
+function quickFilter(type) {
+    let url = "{{ url_for('view_donors') }}?";
+    
+    switch(type) {
+        case 'young':
+            url += "min_age=18&max_age=25";
+            break;
+        case 'available':
+            url += "availability=available";
+            break;
+        case 'universal':
+            url += "blood_group=O-";
+            break;
+        case 'senior':
+            url += "min_age=55&max_age=65";
+            break;
+    }
+    
+    window.location.href = url;
+}
+
+function viewDonorDetails(donorId) {
+    // In a real application, this would fetch donor details
+    alert(`Donor details for ID: ${donorId} would be shown here.`);
+}
+
+function viewDonationHistory(donorId) {
+    // In a real application, this would show donation history
+    alert(`Donation history for donor ID: ${donorId} would be shown here.`);
+}
+
+function exportDonors() {
+    // In a real application, this would export donor data
+    alert('Export functionality would be implemented here.');
+}
+
+// Update checkboxes when clicked
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.donor-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                selectedDonors.add(this.value);
+            } else {
+                selectedDonors.delete(this.value);
+                document.getElementById('selectAll').checked = false;
+            }
+            updateSelectedCount();
+        });
+    });
+});
+</script>
+{% endblock %}

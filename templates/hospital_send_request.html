@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Send Blood Request - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-warning text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-bullhorn me-2"></i>Send Blood Request to Admin
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    This request will be sent directly to system administrators for immediate attention.
+                </div>
+
+                <form method="POST" action="{{ url_for('hospital_send_blood_request') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="blood_group" class="form-label">
+                                <i class="fas fa-tint me-1"></i>Blood Group Required
+                            </label>
+                            <select class="form-select" id="blood_group" name="blood_group" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="quantity" class="form-label">
+                                <i class="fas fa-weight me-1"></i>Quantity Required (ml)
+                            </label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" 
+                                   min="100" step="50" placeholder="ml" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="urgency_level" class="form-label">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Urgency Level
+                            </label>
+                            <select class="form-select" id="urgency_level" name="urgency_level" required>
+                                <option value="Low">Low - Routine requirement</option>
+                                <option value="Medium" selected>Medium - Required within 48 hours</option>
+                                <option value="High">High - Required within 24 hours</option>
+                                <option value="Critical">Critical - Emergency requirement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="estimated_date" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Estimated Need Date
+                            </label>
+                            <input type="date" class="form-control" id="estimated_date" name="estimated_date"
+                                   min="{{ today }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment me-1"></i>Additional Information
+                        </label>
+                        <textarea class="form-control" id="message" name="message" 
+                                  rows="4" placeholder="Provide any additional details about the patient's condition, surgery details, or special requirements..."></textarea>
+                        <div class="form-text">This information will help administrators prioritize and fulfill your request.</div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Note:</strong> For critical emergencies, please also contact the blood bank directly by phone.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-paper-plane me-1"></i>Send Request to Admin
+                        </button>
+                        <a href="{{ url_for('hospital_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="card mt-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-phone-alt me-2"></i>Emergency Contacts
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <i class="fas fa-hospital fa-2x text-success mb-2"></i>
+                        <h6>City Blood Bank</h6>
+                        <small>+1-555-0100</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <i class="fas fa-ambulance fa-2x text-warning mb-2"></i>
+                        <h6>Emergency Response</h6>
+                        <small>+1-555-EMERGENCY</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.getElementById('estimated_date').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

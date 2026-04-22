@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Registration - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-warning text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Blood Donor Registration
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('donor_registration') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user me-1"></i>Full Name
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter your full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Enter your email" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Create a password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="blood_group" class="form-label">
+                                <i class="fas fa-tint me-1"></i>Blood Group
+                            </label>
+                            <select class="form-select" id="blood_group" name="blood_group" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="age" class="form-label">
+                                <i class="fas fa-birthday-cake me-1"></i>Age
+                            </label>
+                            <input type="number" class="form-control" id="age" name="age" 
+                                   min="18" max="65" placeholder="Age" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="gender" class="form-label">
+                                <i class="fas fa-venus-mars me-1"></i>Gender
+                            </label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="weight" class="form-label">
+                                <i class="fas fa-weight me-1"></i>Weight (kg)
+                            </label>
+                            <input type="number" class="form-control" id="weight" name="weight" 
+                                   min="45" step="0.1" placeholder="Weight in kg" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-1"></i>Phone Number
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="Enter your phone number" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_donation_date" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Last Donation Date
+                            </label>
+                            <input type="date" class="form-control" id="last_donation_date" name="last_donation_date">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">
+                            <i class="fas fa-address-card me-1"></i>Address
+                        </label>
+                        <textarea class="form-control" id="address" name="address" 
+                                  rows="3" placeholder="Enter your complete address" required></textarea>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the terms and conditions and confirm that I meet all the eligibility criteria for blood donation.
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-user-plus me-1"></i>Register as Donor
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">
+                    Already registered? 
+                    <a href="{{ url_for('donor_login') }}" class="text-decoration-none">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Eligibility Criteria -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2 text-info"></i>Eligibility Criteria
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Age between 18 and 65 years</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Weight at least 45 kg</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Good health condition</li>
+                    <li><i class="fas fa-check text-success me-2"></i>No serious illnesses</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Not pregnant or breastfeeding</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

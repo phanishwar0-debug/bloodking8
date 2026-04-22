@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}View Patients - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-procedures me-2 text-primary"></i>Patient Records
+            </h2>
+            {% if session.hospital_id %}
+            <a href="{{ url_for('feed_patient') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus me-1"></i>Add New Patient
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Patients
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ patients|length }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-procedures fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Completed
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ patients|selectattr("status", "equalto", "Completed")|list|length }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Pending
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ patients|selectattr("status", "equalto", "Pending")|list|length }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    Critical
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ patients|selectattr("urgency_level", "equalto", "Critical")|list|length }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2 text-primary"></i>Patient Records
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if patients %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Patient ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Hospital</th>
+                                    <th>Blood Group</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Required Quantity</th>
+                                    <th>Urgency</th>
+                                    <th>Status</th>
+                                    <th>Request Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr>
+                                    <td>#{{ patient.id }}</td>
+                                    <td>
+                                        <strong>{{ patient.name }}</strong>
+                                        {% if patient.urgency_level == 'Critical' %}
+                                            <i class="fas fa-exclamation-triangle text-danger ms-1" title="Critical"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if patient.hospital_name %}
+                                            {{ patient.hospital_name }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge blood-group-badge bg-danger">{{ patient.blood_group }}</span>
+                                    </td>
+                                    <td>{{ patient.age }} years</td>
+                                    <td>{{ patient.gender }}</td>
+                                    <td>
+                                        <strong>{{ patient.required_quantity_ml }}</strong> ml
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 
+                                            'success' if patient.urgency_level == 'Low' 
+                                            else 'warning' if patient.urgency_level == 'Medium'
+                                            else 'danger' if patient.urgency_level == 'Critical'
+                                            else 'info'
+                                        }}">
+                                            {{ patient.urgency_level }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge status-badge bg-{{ 
+                                            'warning' if patient.status == 'Pending'
+                                            else 'success' if patient.status == 'Approved' or patient.status == 'Completed'
+                                            else 'danger'
+                                        }}">
+                                            {{ patient.status }}
+                                        </span>
+                                    </td>
+                                    {# --- FIX ON LINE 158 --- #}
+                                    <td>{{ patient.requested_date if patient.requested_date else '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-procedures fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Patient Records</h5>
+                        <p class="text-muted">There are no patient records in the system.</p>
+                        {% if session.hospital_id %}
+                        <a href="{{ url_for('feed_patient') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-1"></i>Add First Patient
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

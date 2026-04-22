@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Bank Registration - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-hospital me-2"></i>Blood Bank Registration
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('blood_banker_registration') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user me-1"></i>Contact Person Name
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter contact person name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Enter blood bank email" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Create a password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="bank_name" class="form-label">
+                                <i class="fas fa-building me-1"></i>Blood Bank Name
+                            </label>
+                            <input type="text" class="form-control" id="bank_name" name="bank_name" 
+                                   placeholder="Enter blood bank name" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="license_number" class="form-label">
+                                <i class="fas fa-id-card me-1"></i>License Number
+                            </label>
+                            <input type="text" class="form-control" id="license_number" name="license_number" 
+                                   placeholder="Enter license number" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-1"></i>Phone Number
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">
+                            <i class="fas fa-address-card me-1"></i>Blood Bank Address
+                        </label>
+                        <textarea class="form-control" id="address" name="address" 
+                                  rows="3" placeholder="Enter complete blood bank address" required></textarea>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the terms and conditions and confirm that we are a licensed blood bank.
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-hospital me-1"></i>Register Blood Bank
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">
+                    Already registered? 
+                    <a href="{{ url_for('blood_banker_login') }}" class="text-decoration-none">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2 text-success"></i>Benefits for Blood Banks
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Manage blood inventory efficiently</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Connect with registered donors</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Receive blood requests from hospitals</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Blockchain-based transaction tracking</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Real-time blood stock monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

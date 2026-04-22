@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+            </h2>
+            <div class="btn-group">
+                <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-bullhorn me-1"></i>Send Alerts
+                </a>
+                <a href="{{ url_for('admin_email_logs') }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-envelope me-1"></i>Email Logs
+                </a>
+                <a href="{{ url_for('view_donors') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-users me-1"></i>View Donors
+                </a>
+                <a href="{{ url_for('view_blood') }}" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-tint me-1"></i>View Blood
+                </a>
+                <a href="{{ url_for('view_patients') }}" class="btn btn-outline-warning btn-sm">
+                    <i class="fas fa-procedures me-1"></i>View Patients
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Donors
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.total_donors }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Blood Bankers
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.total_blood_bankers }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hospital fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Hospitals
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.total_hospitals }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-ambulance fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Patients
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.total_patients }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-procedures fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Alert Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bullhorn me-2"></i>Quick Email Alerts
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                                        <h6>All Donors</h6>
+                                        <p class="small text-muted">Send alert to all registered donors</p>
+                                        <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-sm btn-outline-primary">
+                                            Send Alert
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-tint fa-2x text-danger mb-3"></i>
+                                        <h6>Blood Group Specific</h6>
+                                        <p class="small text-muted">Target donors by blood group</p>
+                                        <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-sm btn-outline-danger">
+                                            Send Alert
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-hospital fa-2x text-success mb-3"></i>
+                                        <h6>Blood Banks</h6>
+                                        <p class="small text-muted">Alert all blood banks</p>
+                                        <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-sm btn-outline-success">
+                                            Send Alert
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-ambulance fa-2x text-info mb-3"></i>
+                                        <h6>Hospitals</h6>
+                                        <p class="small text-muted">Notify all hospitals</p>
+                                        <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-sm btn-outline-info">
+                                            Send Alert
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Blood Inventory -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-tint me-2 text-danger"></i>Blood Inventory Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if stats.blood_inventory %}
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Blood Group</th>
+                                            <th>Total Quantity (ml)</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for blood in stats.blood_inventory %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge blood-group-badge bg-danger">{{ blood.blood_group }}</span>
+                                            </td>
+                                            <td>
+                                                <strong>{{ blood.total }}</strong> ml
+                                            </td>
+                                            <td>
+                                                <span class="badge status-badge bg-{{ 'success' if blood.total > 1000 else 'warning' if blood.total > 500 else 'danger' }}">
+                                                    {{ 'Sufficient' if blood.total > 1000 else 'Adequate' if blood.total > 500 else 'Low' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if blood.total < 500 %}
+                                                <button class="btn btn-sm btn-outline-warning" onclick="alertLowStock('{{ blood.blood_group }}')">
+                                                    <i class="fas fa-bell me-1"></i>Alert
+                                                </button>
+                                                {% else %}
+                                                <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-tint fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No blood inventory available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-history me-2 text-primary"></i>Recent System Activity
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-user-plus text-success me-2"></i>
+                                    <strong>New donor registered</strong>
+                                    <small class="text-muted d-block">John Doe (O+) just signed up</small>
+                                </div>
+                                <span class="badge bg-light text-dark">Just now</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-tint text-danger me-2"></i>
+                                    <strong>Blood donation recorded</strong>
+                                    <small class="text-muted d-block">450ml of A+ blood added to inventory</small>
+                                </div>
+                                <span class="badge bg-light text-dark">5 min ago</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-ambulance text-warning me-2"></i>
+                                    <strong>Patient registered</strong>
+                                    <small class="text-muted d-block">Emergency blood request from City Hospital</small>
+                                </div>
+                                <span class="badge bg-light text-dark">15 min ago</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-envelope text-info me-2"></i>
+                                    <strong>Email alert sent</strong>
+                                    <small class="text-muted d-block">Critical blood requirement notification</small>
+                                </div>
+                                <span class="badge bg-light text-dark">1 hour ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & System Info -->
+            <div class="col-lg-4 mb-4">
+                <!-- Quick Actions -->
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-rocket me-2 text-primary"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('admin_send_alerts') }}" class="btn btn-outline-primary text-start">
+                                <i class="fas fa-bullhorn me-2"></i>Send Email Alerts
+                            </a>
+                            <a href="{{ url_for('admin_email_logs') }}" class="btn btn-outline-info text-start">
+                                <i class="fas fa-envelope me-2"></i>View Email Logs
+                            </a>
+                            <a href="{{ url_for('view_donors') }}" class="btn btn-outline-success text-start">
+    <i class="fas fa-users me-2"></i>Manage Donors (with Filters)
+</a>
+                            <a href="{{ url_for('view_blood') }}" class="btn btn-outline-danger text-start">
+                                <i class="fas fa-tint me-2"></i>Blood Inventory
+                            </a>
+                            <a href="{{ url_for('view_patients') }}" class="btn btn-outline-warning text-start">
+                                <i class="fas fa-procedures me-2"></i>Patient Records
+                            </a>
+                            <a href="{{ url_for('blockchain_explorer') }}" class="btn btn-outline-dark text-start">
+                                <i class="fas fa-link me-2"></i>Blockchain Explorer
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger text-start">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                            <!-- In the Quick Actions section, update the donor link -->
+
+                        </div>
+                    </div>
+                </div>
+<!-- Add these to the Quick Actions card -->
+<a href="{{ url_for('admin_hospitals') }}" class="btn btn-outline-info text-start">
+    <i class="fas fa-ambulance me-2"></i>Manage Hospitals
+</a>
+<a href="{{ url_for('admin_blood_bankers') }}" class="btn btn-outline-success text-start">
+    <i class="fas fa-hospital me-2"></i>Manage Blood Bankers
+</a>
+<a href="{{ url_for('admin_patients') }}" class="btn btn-outline-warning text-start">
+    <i class="fas fa-procedures me-2"></i>Manage Patients
+</a>
+<a href="{{ url_for('admin_interested_donors') }}" class="btn btn-outline-danger text-start">
+    <i class="fas fa-heart me-2"></i>Interested Donors
+</a>
+                <!-- System Information -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2 text-info"></i>System Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <small class="text-muted">Blockchain Status:</small>
+                            <span class="badge bg-success float-end">Active</span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Database:</small>
+                            <span class="badge bg-success float-end">Connected</span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Total Blocks:</small>
+                            <span class="badge bg-primary float-end">{{ stats.blood_inventory|length + 1 }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Email System:</small>
+                            <span class="badge bg-{{ 'success' if email_config.enabled else 'warning' }} float-end">
+                                {{ 'Active' if email_config.enabled else 'Simulation' }}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">System Uptime:</small>
+                            <span class="badge bg-info float-end">100%</span>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Last Backup:</small>
+                            <span class="badge bg-success float-end">{{ today }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Urgent Alerts -->
+                <div class="card shadow mt-4 border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Urgent Alerts
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% set low_stock = stats.blood_inventory|selectattr("total", "lt", 500)|list %}
+                        {% if low_stock %}
+                            {% for blood in low_stock %}
+                            <div class="alert alert-warning alert-dismissible fade show py-2 mb-2" role="alert">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    <strong>{{ blood.blood_group }}</strong> is running low ({{ blood.total }}ml)
+                                </small>
+                                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-success text-center mb-0">
+                                <i class="fas fa-check-circle me-1"></i>All blood groups are sufficiently stocked
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar me-2 text-success"></i>Quick Stats
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-2">
+                                    <h6 class="text-primary mb-1">{{ (stats.total_donors / 100 * 100)|round|int }}%</h6>
+                                    <small class="text-muted">Donor Growth</small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="border rounded p-2">
+                                    <h6 class="text-success mb-1">{{ (stats.blood_inventory|sum(attribute='total') / 5000 * 100)|round|int }}%</h6>
+                                    <small class="text-muted">Inventory Level</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <h6 class="text-info mb-1">24/7</h6>
+                                    <small class="text-muted">System Availability</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <h6 class="text-warning mb-1">99.9%</h6>
+                                    <small class="text-muted">Success Rate</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Performance -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-envelope me-2"></i>Email Alert Performance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body py-3">
+                                        <h4>15</h4>
+                                        <small>Alerts Sent Today</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body py-3">
+                                        <h4>98%</h4>
+                                        <small>Delivery Rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body py-3">
+                                        <h4>45</h4>
+                                        <small>Responses</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body py-3">
+                                        <h4>2</h4>
+                                        <small>Failed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Low Stock Alert Modal -->
+<div class="modal fade" id="lowStockModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Send Low Stock Alert</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Send an urgent alert to donors with blood group <strong id="alertBloodGroup"></strong> about low stock levels?</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    This will send an email to all available donors with the matching blood group.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="sendLowStockAlert()">
+                    <i class="fas fa-paper-plane me-1"></i>Send Alert
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentBloodGroup = '';
+
+function alertLowStock(bloodGroup) {
+    currentBloodGroup = bloodGroup;
+    document.getElementById('alertBloodGroup').textContent = bloodGroup;
+    new bootstrap.Modal(document.getElementById('lowStockModal')).show();
+}
+
+function sendLowStockAlert() {
+    // Redirect to send alerts page with pre-filled data
+    const subject = `🚨 URGENT: Low ${currentBloodGroup} Blood Stock`;
+    const message = `
+<h2 style="color: #dc3545;">URGENT: LOW BLOOD STOCK ALERT</h2>
+<p>Dear Donor,</p>
+<p>We are experiencing a critical shortage of <strong>${currentBloodGroup}</strong> blood in our inventory. Your immediate help is needed to save lives.</p>
+<p style="color: #dc3545; font-weight: bold;">Your donation is urgently required!</p>
+<p>Please visit your nearest blood bank as soon as possible if you are eligible to donate.</p>
+<p>Thank you for your lifesaving support.</p>
+<p><em>BloodChain Emergency Response Team</em></p>
+    `.trim();
+    
+    // Create a form and submit it to pre-fill the send alerts page
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{{ url_for('admin_send_alerts') }}";
+    
+    const alertTypeInput = document.createElement('input');
+    alertTypeInput.type = 'hidden';
+    alertTypeInput.name = 'alert_type';
+    alertTypeInput.value = 'specific_blood_group';
+    form.appendChild(alertTypeInput);
+    
+    const bloodGroupInput = document.createElement('input');
+    bloodGroupInput.type = 'hidden';
+    bloodGroupInput.name = 'blood_group';
+    bloodGroupInput.value = currentBloodGroup;
+    form.appendChild(bloodGroupInput);
+    
+    const subjectInput = document.createElement('input');
+    subjectInput.type = 'hidden';
+    subjectInput.name = 'subject';
+    subjectInput.value = subject;
+    form.appendChild(subjectInput);
+    
+    const messageInput = document.createElement('input');
+    messageInput.type = 'hidden';
+    messageInput.name = 'message';
+    messageInput.value = message;
+    form.appendChild(messageInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Auto-refresh dashboard every 2 minutes
+setInterval(() => {
+    console.log('Auto-refreshing dashboard data...');
+    // In a real application, you might want to refresh specific components
+    // or show a notification instead of full page reload
+}, 120000);
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

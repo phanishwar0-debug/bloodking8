@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Bank Dashboard - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-hospital me-2 text-success"></i>Blood Bank Dashboard
+            </h2>
+            <span class="badge bg-success fs-6">Welcome, {{ session.banker_name }}</span>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Available Blood (ml)
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {% set total_blood = namespace(value=0) %}
+                                    {% for blood in stats.blood_inventory %}
+                                        {% set total_blood.value = total_blood.value + blood.total %}
+                                    {% endfor %}
+                                    {{ total_blood.value }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-tint fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Blood Groups Available
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.blood_inventory|length }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-vial fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Registered Donors
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ stats.total_donors }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Blood Inventory -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-tint me-2 text-danger"></i>Blood Inventory
+                        </h5>
+                        <a href="{{ url_for('view_blood') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>View All
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if stats.blood_inventory %}
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Blood Group</th>
+                                            <th>Quantity (ml)</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for blood in stats.blood_inventory %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge blood-group-badge bg-danger">{{ blood.blood_group }}</span>
+                                            </td>
+                                            <td>
+                                                <strong>{{ blood.total }}</strong> ml
+                                            </td>
+                                            <td>
+                                                <span class="badge status-badge bg-{{ 'success' if blood.total > 1000 else 'warning' if blood.total > 500 else 'danger' }}">
+                                                    {{ 'Sufficient' if blood.total > 1000 else 'Adequate' if blood.total > 500 else 'Low' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-tint fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No blood inventory available</p>
+                                <a href="{{ url_for('view_donors') }}" class="btn btn-primary">
+                                    <i class="fas fa-users me-1"></i>Contact Donors
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-rocket me-2 text-success"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('view_donors') }}" class="btn btn-outline-primary text-start">
+                                <i class="fas fa-users me-2"></i>View Donors
+                            </a>
+                            <a href="{{ url_for('view_blood') }}" class="btn btn-outline-success text-start">
+                                <i class="fas fa-tint me-2"></i>Manage Inventory
+                            </a>
+                            <a href="{{ url_for('view_patients') }}" class="btn btn-outline-warning text-start">
+                                <i class="fas fa-procedures me-2"></i>View Patients
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger text-start">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Stock Alert -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bell me-2 text-warning"></i>Stock Alerts
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% for blood in stats.blood_inventory %}
+                            {% if blood.total < 500 %}
+                            <div class="alert alert-warning alert-dismissible fade show py-2" role="alert">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    <strong>{{ blood.blood_group }}</strong> is running low ({{ blood.total }}ml)
+                                </small>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if stats.blood_inventory|selectattr("total", "lt", 500)|list|length == 0 %}
+                            <p class="text-success text-center mb-0">
+                                <i class="fas fa-check-circle me-1"></i>All blood groups are sufficiently stocked
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

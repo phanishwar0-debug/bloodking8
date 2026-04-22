@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <div class="hero-section mb-5">
+            <h1 class="display-4 text-danger mb-4">
+                <i class="fas fa-tint me-3"></i>BloodChain
+            </h1>
+            <p class="lead fs-4">Revolutionizing Blood Donation with Blockchain Technology</p>
+            <p class="text-muted">Secure, Transparent, and Efficient Blood Donation Management</p>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user-shield fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Administrator</h5>
+                        <p class="card-text text-muted">System administration and overall management</p>
+                        <a href="{{ url_for('admin_login') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-hospital fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Blood Bank</h5>
+                        <p class="card-text text-muted">Blood bank management and inventory control</p>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('blood_banker_login') }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                            <a href="{{ url_for('blood_banker_registration') }}" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-hospital me-1"></i>Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-2x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Blood Donor</h5>
+                        <p class="card-text text-muted">Donor registration and donation tracking</p>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('donor_login') }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                            <a href="{{ url_for('donor_registration') }}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-ambulance fa-2x text-info"></i>
+                        </div>
+                        <h5 class="card-title">Hospital</h5>
+                        <p class="card-text text-muted">Patient management and blood requests</p>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('hospital_login') }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                            <a href="{{ url_for('hospital_registration') }}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-ambulance me-1"></i>Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h4 class="card-title text-danger">
+                            <i class="fas fa-info-circle me-2"></i>About BloodChain
+                        </h4>
+                        <p class="card-text">
+                            BloodChain leverages blockchain technology to create a transparent, secure, and efficient 
+                            blood donation ecosystem. Every donation is recorded on an immutable blockchain, ensuring 
+                            traceability and building trust among all stakeholders.
+                        </p>
+                        <div class="row text-center mt-4">
+                            <div class="col-md-4">
+                                <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                                <h6>Secure & Transparent</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-bolt fa-2x text-warning mb-2"></i>
+                                <h6>Fast & Efficient</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h6>Life Saving</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

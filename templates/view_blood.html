@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Inventory - BloodChain{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-tint me-2 text-danger"></i>Blood Inventory
+            </h2>
+            <div class="btn-group">
+                <button class="btn btn-outline-danger btn-sm" onclick="filterBlood('all')">
+                    <i class="fas fa-list me-1"></i>All
+                </button>
+                <button class="btn btn-outline-success btn-sm" onclick="filterBlood('available')">
+                    <i class="fas fa-check me-1"></i>Available
+                </button>
+            </div>
+        </div>
+
+        <!-- Blood Group Summary -->
+        <div class="row mb-4">
+            {% set blood_groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+            {% for group in blood_groups %}
+            <div class="col-xl-3 col-md-4 col-sm-6 mb-3">
+                <div class="card">
+                    <div class="card-body text-center p-3">
+                        <h5 class="card-title">
+                            <span class="badge blood-group-badge bg-danger">{{ group }}</span>
+                        </h5>
+                        {% set group_blood = blood_inventory|selectattr("blood_group", "equalto", group)|list %}
+                        {% set total_ml = group_blood|sum(attribute="quantity_ml") %}
+                        <h4 class="text-{{ 'success' if total_ml > 1000 else 'warning' if total_ml > 500 else 'danger' }} mb-2">
+                            {{ total_ml }} ml
+                        </h4>
+                        <small class="text-muted">
+                            {{ group_blood|length }} unit{{ 's' if group_blood|length != 1 }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Blood Inventory Table -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2 text-primary"></i>Blood Inventory Details
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if blood_inventory %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Blood ID</th>
+                                    <th>Blood Group</th>
+                                    <th>Quantity</th>
+                                    <th>Donor</th>
+                                    <th>Collection Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th>Blockchain Hash</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for blood in blood_inventory %}
+                                <tr>
+                                    <td>#{{ blood.id }}</td>
+                                    <td>
+                                        <span class="badge blood-group-badge bg-danger">{{ blood.blood_group }}</span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ blood.quantity_ml }}</strong> ml
+                                    </td>
+                                    <td>
+                                        {% if blood.donor_name %}
+                                            {{ blood.donor_name }}
+                                        {% else %}
+                                            <span class="text-muted">Unknown</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ blood.collection_date }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if blood.expiry_date > today else 'danger' }}">
+                                            {{ blood.expiry_date }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge status-badge bg-{{ 'success' if blood.status == 'Available' else 'secondary' if blood.status == 'Used' else 'warning' }}">
+                                            {{ blood.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted font-monospace" title="{{ blood.blockchain_hash }}">
+                                            {{ blood.blockchain_hash[:16] }}...
+                                        </small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-tint fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Blood Inventory</h5>
+                        <p class="text-muted">There is no blood available in the inventory.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Inventory Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie me-2 text-info"></i>Inventory Statistics
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-primary">{{ blood_inventory|length }}</h4>
+                                    <small class="text-muted">Total Units</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-success">
+                                        {{ blood_inventory|selectattr("status", "equalto", "Available")|list|length }}
+                                    </h4>
+                                    <small class="text-muted">Available Units</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-warning">
+                                        {{ blood_inventory|selectattr("status", "equalto", "Used")|list|length }}
+                                    </h4>
+                                    <small class="text-muted">Used Units</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-danger">
+                                        {{ blood_inventory|selectattr("status", "equalto", "Expired")|list|length }}
+                                    </h4>
+                                    <small class="text-muted">Expired Units</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterBlood(filter) {
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const status = row.cells[6].textContent.trim();
+        if (filter === 'all') {
+            row.style.display = '';
+        } else if (filter === 'available') {
+            if (status === 'Available') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+}
+</script>
+{% endblock %}
