@@ -1,4 +1,4 @@
-# 🩸 BloodChain – Blood Donation Management System
+# 🩸 BlockChain – Blood Donation Management System
 
 A Flask-based web application that connects **donors, hospitals, and blood banks**, with a **blockchain ledger** that records key blood-donation events and **automated email alerts** for urgent blood requirements.
 
