@@ -47,6 +47,97 @@ bloodking8/
 └── .gitignore
 ```
 
+## 📸 Screenshots
+
+### Home Page
+Role-based entry point for Administrators, Blood Banks, Blood Donors, and Hospitals.
+
+<p align="center">
+  <img src="screenshots/home.png" alt="BloodChain Home Page" width="500">
+</p>
+
+### Admin Dashboard
+Live statistics, quick email alerts, blood inventory summary, and management shortcuts.
+
+<p align="center">
+  <img src="screenshots/admin-dashboard.png" alt="Admin Dashboard" width="500">
+</p>
+
+### Blood Bank Dashboard
+Available blood, inventory by blood group with stock status, and quick actions.
+
+<p align="center">
+  <img src="screenshots/blood-bank-dashboard.png" alt="Blood Bank Dashboard" width="500">
+</p>
+
+### Blood Bank Login & Registration
+
+| Login | Registration |
+|:-----:|:------------:|
+| <img src="screenshots/blood-bank-login.png" alt="Blood Bank Login" width="400"> | <img src="screenshots/blood-bank-registration.png" alt="Blood Bank Registration" width="400"> |
+
+### Donor Login & Registration
+
+| Login | Registration |
+|:-----:|:------------:|
+| <img src="screenshots/donor-login.png" alt="Donor Login" width="400"> | <img src="screenshots/donor-registration.png" alt="Donor Registration" width="400"> |
+
+### Donor Profile
+Personal details, donation history with blockchain hash, availability response, and donation totals.
+
+<p align="center">
+  <img src="screenshots/donor-profile.png" alt="Donor Profile" width="500">
+</p>
+
+### Hospital Login & Registration
+
+| Login | Registration |
+|:-----:|:------------:|
+| <img src="screenshots/hospital-login.png" alt="Hospital Login" width="400"> | <img src="screenshots/hospital-registration.png" alt="Hospital Registration" width="400"> |
+
+### Hospital Dashboard
+Quick access to patient registration, blood inventory, donor search, and emergency contacts.
+
+<p align="center">
+  <img src="screenshots/hospital-dashboard.png" alt="Hospital Dashboard" width="500">
+</p>
+
+### Register Patient & Send Blood Request
+
+| Register New Patient | Send Blood Request to Admin |
+|:--------------------:|:---------------------------:|
+| <img src="screenshots/register-patient.png" alt="Register New Patient" width="400"> | <img src="screenshots/blood-request.png" alt="Send Blood Request" width="400"> |
+
+### Blood Donation Form
+Donors submit a donation with a health questionnaire; each donation is recorded on the blockchain.
+
+<p align="center">
+  <img src="screenshots/donate-blood.png" alt="Blood Donation Form" width="500">
+</p>
+
+### Blood Inventory
+Stock by blood group, per-unit details with expiry dates and blockchain hashes, and inventory statistics.
+
+<p align="center">
+  <img src="screenshots/blood-inventory.png" alt="Blood Inventory" width="500">
+</p>
+
+### Donor Management
+Filter donors by age, blood group, gender, and availability, and send emails to selected donors.
+
+<p align="center">
+  <img src="screenshots/blood-donors.png" alt="Blood Donors List" width="500">
+</p>
+
+### Patient Records
+Track patients requiring blood, with urgency level and request status.
+
+<p align="center">
+  <img src="screenshots/patient-records.png" alt="Patient Records" width="500">
+</p>
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
